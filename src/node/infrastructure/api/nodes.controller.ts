@@ -2,14 +2,15 @@ import { Body, Controller, Get, HttpCode, Param, Post } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { CreateGroupDto } from './dtos/create-group.dto';
 import { AssociateGroupDto } from './dtos/associate-group.dto';
+import { UserService } from 'src/node/application/services/user.service';
 
 @Controller()
 export class NodesController {
+  constructor(private readonly userService: UserService) {}
   @Post('users')
   @HttpCode(201)
   async createUser(@Body() body: CreateUserDto) {
-    // TODO: Implement user creation
-    return;
+    return this.userService.createUser(body.data);
   }
 
   @Post('groups')

@@ -1,4 +1,10 @@
-import { pgTable, integer, varchar, timestamp } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  integer,
+  varchar,
+  timestamp,
+  serial,
+} from 'drizzle-orm/pg-core';
 
 export const NodeType = {
   user: 'user',
@@ -6,7 +12,7 @@ export const NodeType = {
 } as const;
 
 export const node = pgTable('node', {
-  id: integer('id').primaryKey(),
+  id: serial('id').primaryKey(),
   name: varchar('name', { length: 200 }).notNull(),
   email: varchar('email', { length: 300 }).unique('user_email_uq', {
     nulls: 'not distinct',
@@ -18,7 +24,7 @@ export const node = pgTable('node', {
 });
 
 export const nodesClosure = pgTable('nodes_closure', {
-  id: integer('id').primaryKey(),
+  id: serial('id').primaryKey(),
   parentId: integer('parent_id')
     .references(() => node.id)
     .notNull(),

@@ -1,42 +1,18 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigType } from '@nestjs/config';
-import { Pool } from 'pg';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import * as v from 'valibot';
-import { schema } from './infrastructure/database/schema';
-import { dbConfig } from '../config/database';
 import { NodesController } from './infrastructure/api/nodes.controller';
-
-const DRIZZLE = Symbol('drizzle');
+import { DrizzleNodeRepository } from './infrastructure/database/repositories/drizzle-node-repository';
+import { DrizzleModule } from './infrastructure/database/drizzle.module';
+import { UserRepository } from './domain/repositories/user.repository';
+import { UserService } from './application/services/user.service';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      load: [dbConfig],
-      validationSchema: {
-        validate: v.parser(
-          v.object({
-            DATABASE_URL: v.pipe(v.string(), v.url()),
-          }),
-          {
-            abortEarly: true,
-            lang: 'pt',
-          },
-        ),
-      },
-    }),
-  ],
+  imports: [DrizzleModule],
   providers: [
     {
-      provide: DRIZZLE,
-      useFactory: (config: ConfigType<typeof dbConfig>) => {
-        const pool = new Pool({
-          connectionString: config.url,
-        });
-        return drizzle(pool, { schema });
-      },
-      inject: [dbConfig.KEY],
+      provide: UserRepository,
+      useClass: DrizzleNodeRepository,
     },
+    UserService,
   ],
   controllers: [NodesController],
 })
