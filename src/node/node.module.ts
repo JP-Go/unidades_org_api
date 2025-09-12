@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import { Pool } from 'pg';
-import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import * as v from 'valibot';
-import { Schema, schema } from './infrastructure/database/schema';
-import { dbConfig } from './config/database';
-import { UserController } from './infrastructure/api/user.controller';
+import { schema } from './infrastructure/database/schema';
+import { dbConfig } from '../config/database';
+import { NodesController } from './infrastructure/api/nodes.controller';
 
 const DRIZZLE = Symbol('drizzle');
 
@@ -38,6 +38,6 @@ const DRIZZLE = Symbol('drizzle');
       inject: [dbConfig.KEY],
     },
   ],
-  controllers: [UserController],
+  controllers: [NodesController],
 })
 export class NodeModule {}

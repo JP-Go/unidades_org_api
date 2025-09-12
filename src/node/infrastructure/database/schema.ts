@@ -5,4 +5,6 @@ export const schema = {
   nodesClosure,
 };
 
+export default schema;
+
 export type Schema = typeof schema;
