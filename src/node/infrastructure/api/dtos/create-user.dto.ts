@@ -7,4 +7,5 @@ const createUserSchema = v.object({
 });
 
 export type ICreateUserDto = v.InferInput<typeof createUserSchema>;
+
 export class CreateUserDto extends TypeschemaDto(createUserSchema) {}

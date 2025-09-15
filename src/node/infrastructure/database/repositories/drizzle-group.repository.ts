@@ -1,4 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { NodeRepository } from 'src/node/domain/repositories/node.repository';
 import { Group, type NodeId } from 'src/node/domain/entities/node';
 import { GroupRepository } from 'src/node/domain/repositories/group.repository';
@@ -12,6 +17,19 @@ export class DrizzleGroupRepository implements GroupRepository {
     @Inject(UserRepository)
     private readonly userRepository: UserRepository,
   ) {}
+  async getGroupById(groupId: NodeId): Promise<Group> {
+    try {
+      const aNode = await this.nodeRepository.getNodeById(groupId);
+      if (aNode.type !== 'group')
+        throw new NotFoundException('Group not found');
+      return Group.existing(aNode.name, 0, aNode.id);
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        throw new NotFoundException('Group not found');
+      }
+      throw new InternalServerErrorException(e);
+    }
+  }
   async getUserOrganizations(
     userId: NodeId,
     maxDepth: number = -1,

@@ -6,4 +6,6 @@ const createGroupSchema = v.object({
   parentId: v.optional(v.pipe(v.string(), v.minLength(1))),
 });
 
+export type ICreateGroupDto = v.InferInput<typeof createGroupSchema>;
+
 export class CreateGroupDto extends TypeschemaDto(createGroupSchema) {}
