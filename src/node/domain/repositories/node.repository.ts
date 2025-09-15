@@ -1,5 +1,7 @@
-import { Node, type NodeId } from '../entities/node';
+import { Injectable } from '@nestjs/common';
+import { Node, NodeId } from '../entities/node';
 
+@Injectable()
 export abstract class NodeRepository {
   abstract getDescendants(
     node: Node,

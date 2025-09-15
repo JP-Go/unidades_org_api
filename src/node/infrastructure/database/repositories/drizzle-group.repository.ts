@@ -1,12 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { NodeRepository } from 'src/node/domain/repositories/node.repository';
 import { Group, type NodeId } from 'src/node/domain/entities/node';
 import { GroupRepository } from 'src/node/domain/repositories/group.repository';
+import { UserRepository } from 'src/node/domain/repositories/user.repository';
 
 @Injectable()
 export class DrizzleGroupRepository implements GroupRepository {
-  constructor(private readonly nodeRepository: NodeRepository) {}
-  createGroup(group: Group, parentId?: NodeId): Promise<Group> {
-    throw new Error('Method not implemented.');
+  constructor(
+    @Inject(NodeRepository)
+    private readonly nodeRepository: NodeRepository,
+    @Inject(UserRepository)
+    private readonly userRepository: UserRepository,
+  ) {}
+  async getUserOrganizations(
+    userId: NodeId,
+    maxDepth: number = -1,
+  ): Promise<Group[]> {
+    const user = await this.userRepository.getUserById(userId);
+    if (maxDepth !== -1) {
+      return await this.nodeRepository.getAncestors(user, 1, maxDepth);
+    }
+    return await this.nodeRepository.getAncestors(user);
+  }
+  async createGroup(group: Group, parentId?: NodeId): Promise<Group> {
+    if (parentId) {
+      const parentGroup = await this.nodeRepository.getNodeById(parentId);
+      const savedGroup = await this.nodeRepository.addNode(group);
+      await this.nodeRepository.addEdge(parentGroup, savedGroup);
+      return savedGroup;
+    }
+    const savedGroup = await this.nodeRepository.addNode(group);
+    return savedGroup;
   }
 }

@@ -5,15 +5,13 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { DRIZZLE, type DrizzleDatabase } from '../drizzle.module';
+import { DRIZZLE, DrizzleDatabase } from '../drizzle.module';
 import { NodeRepository } from 'src/node/domain/repositories/node.repository';
-import { Group, Node, type NodeId, User } from 'src/node/domain/entities/node';
+import { Group, Node, NodeId, User } from 'src/node/domain/entities/node';
 import { edges, node } from '../node.model';
-import { and, eq, getTableColumns, gte, lt, sql } from 'drizzle-orm';
-import { type PgSelectPrepare, PgSelectBase } from 'drizzle-orm/pg-core';
-
-const nodeColumns = getTableColumns(node);
-type NodeColumns = typeof nodeColumns;
+import { and, eq, getTableColumns, gte, lt, lte, sql } from 'drizzle-orm';
+import type { PgSelectPrepare, PgSelectBase } from 'drizzle-orm/pg-core';
+import type { NodeColumns } from './@types';
 
 @Injectable()
 export class DrizzleNodeRepository implements NodeRepository {
@@ -53,9 +51,8 @@ export class DrizzleNodeRepository implements NodeRepository {
     }
 
     // WARN: not excluding self references because we will update them to
-    //
-    const ancestors = await this.getAncestors(fromNodeDb);
-    const descendants = await this.getDescendants(toNodeDb);
+    const ancestors = await this.getAncestors(fromNodeDb, 0);
+    const descendants = await this.getDescendants(toNodeDb, 0);
     await this.db.transaction(async (tx) => {
       await tx.insert(edges).values({
         parentId: fromNodeDb.id,
@@ -97,9 +94,10 @@ export class DrizzleNodeRepository implements NodeRepository {
 
   async getDescendants(
     aNode: Node,
-    minDepth: number = 0,
-    maxDepth: number = 0,
+    minDepth: number = 1,
+    maxDepth: number = -1,
   ): Promise<Node[]> {
+    console.log(minDepth, maxDepth);
     let query = this.db
       .select({
         ...getTableColumns(node),
@@ -109,12 +107,12 @@ export class DrizzleNodeRepository implements NodeRepository {
       .innerJoin(edges, eq(node.id, edges.childId))
       .where(and(eq(edges.parentId, aNode.id), gte(edges.depth, minDepth)))
       .$dynamic();
-    if (maxDepth !== 0) {
+    if (maxDepth !== -1) {
       query = query.where(
         and(
           eq(edges.parentId, aNode.id),
           gte(edges.depth, minDepth),
-          lt(edges.depth, maxDepth),
+          lte(edges.depth, maxDepth),
         ),
       );
     }
@@ -144,8 +142,8 @@ export class DrizzleNodeRepository implements NodeRepository {
   }
   async getAncestors(
     aNode: Node,
-    minDepth: number = 0,
-    maxDepth: number = 0,
+    minDepth: number = 1,
+    maxDepth: number = -1,
   ): Promise<Node[]> {
     let query = this.db
       .select({
@@ -156,12 +154,12 @@ export class DrizzleNodeRepository implements NodeRepository {
       .innerJoin(edges, eq(node.id, edges.parentId))
       .where(and(eq(edges.childId, aNode.id), gte(edges.depth, minDepth)))
       .$dynamic();
-    if (maxDepth !== 0) {
+    if (maxDepth !== -1) {
       query = query.where(
         and(
           eq(edges.childId, aNode.id),
           gte(edges.depth, minDepth),
-          lt(edges.depth, maxDepth),
+          lte(edges.depth, maxDepth),
         ),
       );
     }
@@ -199,7 +197,10 @@ export class DrizzleNodeRepository implements NodeRepository {
       if (aNode.type === 'user') {
         insertValue.email = (aNode as User).email;
       }
-      const [saved] = await tx.insert(node).values(insertValue).returning();
+      const [saved] = await tx
+        .insert(node)
+        .values({ ...insertValue })
+        .returning();
       if (!saved) {
         throw new InternalServerErrorException('Failed to save node');
       }
@@ -220,6 +221,7 @@ export class DrizzleNodeRepository implements NodeRepository {
         depth: savedNode.depth,
         name: savedNode.name,
         type: savedNode.type,
+        email: savedNode.email,
       },
       savedNode.id,
     );
@@ -234,6 +236,7 @@ export class DrizzleNodeRepository implements NodeRepository {
         depth: 0,
         name: nd.name,
         type: nd.type,
+        email: nd.email,
       },
       nd.id,
     );

@@ -7,6 +7,7 @@ export const NodeType = {
 type NodeConstructorParams = {
   name: string;
   depth: number;
+  email: string | null;
   type: NodeType;
 };
 
@@ -15,17 +16,19 @@ export class Node {
   id: NodeId;
   type: NodeType;
   name: string;
+  email: string | null;
   depth: number;
   ancestor?: Node;
   descendants?: Node[];
 
   constructor(
-    { type, depth, name }: NodeConstructorParams,
+    { type, depth, name, email }: NodeConstructorParams,
     id: NodeId | null = null,
   ) {
     this.id = id ?? 0;
     this.type = type;
     this.name = name;
+    this.email = email;
     this.depth = depth;
   }
 }
@@ -36,17 +39,11 @@ type DefinedTypeConstructorParams<T extends NodeType> = Omit<
 > & { type: T };
 
 export class User extends Node {
-  email: string;
-
   constructor(
-    {
-      email,
-      ...params
-    }: DefinedTypeConstructorParams<'user'> & { email: string },
+    params: DefinedTypeConstructorParams<'user'> & { email: string },
     id: NodeId | null = null,
   ) {
     super({ ...params, type: 'user' }, id);
-    this.email = email;
   }
 
   static create(email: string, name: string) {
@@ -71,14 +68,15 @@ export class User extends Node {
 }
 export class Group extends Node {
   constructor(
-    params: DefinedTypeConstructorParams<'group'>,
+    params: DefinedTypeConstructorParams<'group'> & { email: null },
     id: NodeId | null = null,
   ) {
-    super({ ...params, type: 'group' }, id);
+    super({ ...params, email: null, type: 'group' }, id);
   }
   static create(name: string) {
     return new Group({
       name,
+      email: null,
       type: 'group',
       depth: 0,
     });
@@ -88,6 +86,7 @@ export class Group extends Node {
       {
         name,
         depth,
+        email: null,
         type: 'group',
       },
       id,

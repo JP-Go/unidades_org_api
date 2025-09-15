@@ -4,15 +4,9 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
-    globals: true,
     environment: 'node',
     coverage: {
       provider: 'v8',
-    },
-  },
-  resolve: {
-    alias: {
-      'src/': new URL('./src/', import.meta.url).pathname,
     },
   },
 });

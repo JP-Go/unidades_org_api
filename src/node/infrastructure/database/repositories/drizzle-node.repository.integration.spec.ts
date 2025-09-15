@@ -110,14 +110,14 @@ describe('DrizzleNodeRepository Integration Tests', () => {
       await repository.addEdge(parent, child);
       await repository.addEdge(child, grandchild);
 
-      const rootDescendants = await repository.getDescendants(root, 1);
+      const rootDescendants = await repository.getDescendants(root);
       expect(rootDescendants).toHaveLength(3);
-      const parentDescendants = await repository.getDescendants(parent, 1);
+      const parentDescendants = await repository.getDescendants(parent);
       expect(parentDescendants).toHaveLength(2);
-      const childDescendants = await repository.getDescendants(child, 1);
+      const childDescendants = await repository.getDescendants(child);
       expect(childDescendants).toHaveLength(1);
 
-      const grandchildAncestors = await repository.getAncestors(grandchild, 1);
+      const grandchildAncestors = await repository.getAncestors(grandchild);
       expect(grandchildAncestors).toHaveLength(3);
     });
 
@@ -145,17 +145,17 @@ describe('DrizzleNodeRepository Integration Tests', () => {
       await repository.addEdge(parent, child2);
       await repository.addEdge(child1, grandchild);
 
-      const descendants = await repository.getDescendants(parent, 1);
+      const descendants = await repository.getDescendants(parent);
 
       expect(descendants).toHaveLength(3);
       expect(descendants.map((d) => d.name).sort()).toEqual(
         ['Child 1', 'Child 2', 'Grandchild'].sort(),
       );
 
-      const child1Descendants = await repository.getDescendants(child1, 1);
+      const child1Descendants = await repository.getDescendants(child1);
       expect(child1Descendants).toHaveLength(1);
       expect(child1Descendants[0]!.name).toBe('Grandchild');
-      const child2Descendants = await repository.getDescendants(child2, 1);
+      const child2Descendants = await repository.getDescendants(child2);
       expect(child2Descendants).toHaveLength(0);
     });
     it('should return imediate descendants of a given node', async () => {
@@ -170,7 +170,7 @@ describe('DrizzleNodeRepository Integration Tests', () => {
       await repository.addEdge(parent, child2);
       await repository.addEdge(child1, grandchild);
 
-      const descendants = await repository.getDescendants(parent, 1, 2);
+      const descendants = await repository.getDescendants(parent, 1, 1);
       console.log(descendants);
 
       expect(descendants).toHaveLength(2);
@@ -196,13 +196,13 @@ describe('DrizzleNodeRepository Integration Tests', () => {
       await repository.addEdge(parent, child);
       await repository.addEdge(child, grandChild);
 
-      const ancestors = await repository.getAncestors(grandChild, 1);
+      const ancestors = await repository.getAncestors(grandChild);
 
       expect(ancestors).toHaveLength(3);
       expect(ancestors.map((a) => a.name).sort()).toEqual(
         ['Child', 'Parent', 'Root'].sort(),
       );
-      const rootAncestors = await repository.getAncestors(root, 1);
+      const rootAncestors = await repository.getAncestors(root);
       expect(rootAncestors).toHaveLength(0);
     });
     it('should return imediate ancestors of a given node', async () => {
@@ -215,7 +215,7 @@ describe('DrizzleNodeRepository Integration Tests', () => {
       await repository.addEdge(parent, child);
       await repository.addEdge(child, grandChild);
 
-      const ancestors = await repository.getAncestors(grandChild, 1, 2);
+      const ancestors = await repository.getAncestors(grandChild, 1, 1);
 
       expect(ancestors).toHaveLength(1);
       expect(ancestors.map((a) => a.name).sort()).toEqual(['Child']);
