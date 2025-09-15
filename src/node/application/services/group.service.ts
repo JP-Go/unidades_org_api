@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Group, NodeId } from 'src/node/domain/entities/node';
 import { GroupRepository } from 'src/node/domain/repositories/group.repository';
-import { ICreateGroupDto } from 'src/node/infrastructure/api/dtos/create-group.dto';
+import { CreateGroupDto } from 'src/node/infrastructure/api/dtos/create-group.dto';
 
 @Injectable()
 export abstract class GroupService {
   abstract createGroup(
-    group: ICreateGroupDto,
+    group: CreateGroupDto,
     parentId?: NodeId,
   ): Promise<Group>;
   abstract getUserOrganizations(
@@ -17,9 +17,12 @@ export abstract class GroupService {
 
 @Injectable()
 export class GroupServiceImpl implements GroupService {
-  constructor(private readonly groupRepository: GroupRepository) {}
+  constructor(
+    @Inject(GroupRepository)
+    private readonly groupRepository: GroupRepository,
+  ) {}
 
-  async createGroup(group: ICreateGroupDto, parentId?: NodeId): Promise<Group> {
+  async createGroup(group: CreateGroupDto, parentId?: NodeId): Promise<Group> {
     return this.groupRepository.createGroup(Group.create(group.name), parentId);
   }
   async getUserOrganizations(

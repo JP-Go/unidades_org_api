@@ -97,7 +97,6 @@ export class DrizzleNodeRepository implements NodeRepository {
     minDepth: number = 1,
     maxDepth: number = -1,
   ): Promise<Node[]> {
-    console.log(minDepth, maxDepth);
     let query = this.db
       .select({
         ...getTableColumns(node),

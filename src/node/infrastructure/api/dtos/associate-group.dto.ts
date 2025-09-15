@@ -1,10 +1,7 @@
-import { TypeschemaDto } from '@nest-lab/typeschema';
-
-import * as v from 'valibot';
-const associateGroupSchema = v.object({
-  groupId: v.pipe(v.number(), v.integer()),
+import { createZodDto } from 'nestjs-zod';
+import z from 'zod';
+const associateGroupSchema = z.object({
+  groupId: z.number().int().min(1),
 });
 
-export type IAssociateGroupDto = v.InferInput<typeof associateGroupSchema>;
-
-export class AssociateGroupDto extends TypeschemaDto(associateGroupSchema) {}
+export class AssociateGroupDto extends createZodDto(associateGroupSchema) {}

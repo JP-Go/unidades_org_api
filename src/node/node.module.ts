@@ -18,13 +18,14 @@ import {
 import { DrizzleGroupRepository } from './infrastructure/database/repositories/drizzle-group.repository';
 import { GroupRepository } from './domain/repositories/group.repository';
 import { NodeRepository } from './domain/repositories/node.repository';
+import { DrizzleUserRepository } from './infrastructure/database/repositories/drizzle-user.repository';
 
 @Module({
   imports: [DrizzleModule],
   providers: [
     {
       provide: UserRepository,
-      useClass: DrizzleNodeRepository,
+      useClass: DrizzleUserRepository,
     },
     {
       provide: GroupRepository,

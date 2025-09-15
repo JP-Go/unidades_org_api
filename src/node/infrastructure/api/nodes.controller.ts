@@ -7,12 +7,14 @@ import {
   ParseIntPipe,
   Post,
 } from '@nestjs/common';
-import { CreateUserDto } from './dtos/create-user.dto';
-import { CreateGroupDto } from './dtos/create-group.dto';
+import { CreateUserDto, CreateUserResponse } from './dtos/create-user.dto';
+import { CreateGroupDto, CreateGroupResponse } from './dtos/create-group.dto';
 import { AssociateGroupDto } from './dtos/associate-group.dto';
 import { UserService } from 'src/node/application/services/user.service';
 import { GroupService } from 'src/node/application/services/group.service';
 import { NodeService } from 'src/node/application/services/nodes.service';
+import { ZodResponse } from 'nestjs-zod';
+import { ListOfNodesResponse } from './dtos/node-list.dtos';
 
 @Controller()
 export class NodesController {
@@ -23,14 +25,22 @@ export class NodesController {
   ) {}
   @Post('users')
   @HttpCode(201)
+  @ZodResponse({ type: CreateUserResponse })
   async createUser(@Body() body: CreateUserDto) {
-    return this.userService.createUser(body.data);
+    const { id, email, name, type } = await this.userService.createUser(body);
+    return {
+      id,
+      email: email!,
+      name,
+      type,
+    };
   }
 
   @Post('groups')
   @HttpCode(201)
+  @ZodResponse({ type: CreateGroupResponse })
   async createGroup(@Body() body: CreateGroupDto) {
-    return this.groupService.createGroup(body.data);
+    return this.groupService.createGroup(body);
   }
 
   @Post('users/:userId/groups')
@@ -39,20 +49,23 @@ export class NodesController {
     @Param('userId', ParseIntPipe) userId: number,
     @Body() body: AssociateGroupDto,
   ) {
-    return this.userService.addUserToGroup(userId, body.data.groupId);
+    return this.userService.addUserToGroup(userId, body.groupId);
   }
 
   @Get('users/:userId/organizations')
+  @ZodResponse({ type: ListOfNodesResponse })
   async getUserOrganizations(@Param('userId', ParseIntPipe) userId: number) {
     return this.groupService.getUserOrganizations(userId);
   }
 
   @Get('nodes/:nodeId/ancestors')
+  @ZodResponse({ type: ListOfNodesResponse })
   async getNodeAncestors(@Param('nodeId', ParseIntPipe) nodeId: number) {
     return this.nodesService.getAncestors(nodeId);
   }
 
   @Get('nodes/:nodeId/descendants')
+  @ZodResponse({ type: ListOfNodesResponse })
   async getNodeDescendants(@Param('nodeId', ParseIntPipe) nodeId: number) {
     return this.nodesService.getDescendants(nodeId);
   }
