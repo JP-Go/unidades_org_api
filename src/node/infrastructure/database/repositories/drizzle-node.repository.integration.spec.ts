@@ -171,7 +171,6 @@ describe('DrizzleNodeRepository Integration Tests', () => {
       await repository.addEdge(child1, grandchild);
 
       const descendants = await repository.getDescendants(parent, 1, 1);
-      console.log(descendants);
 
       expect(descendants).toHaveLength(2);
       expect(descendants.map((d) => d.name).sort()).toEqual([

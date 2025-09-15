@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Node, NodeId } from '../../domain/entities/node';
 import { NodeRepository } from 'src/node/domain/repositories/node.repository';
 
@@ -18,7 +18,10 @@ export abstract class NodeService {
 
 @Injectable()
 export class NodeServiceImpl implements NodeService {
-  constructor(private readonly nodeRepository: NodeRepository) {}
+  constructor(
+    @Inject(NodeRepository)
+    private readonly nodeRepository: NodeRepository,
+  ) {}
   async getDescendants(
     nodeId: NodeId,
     minDepth?: number,
