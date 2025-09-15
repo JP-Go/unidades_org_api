@@ -76,7 +76,7 @@ describe('DrizzleNodeRepository Integration Tests', () => {
           and(eq(e.parentId, savedNode.id), eq(e.childId, savedNode.id)),
         );
       expect(selfEdge).toHaveLength(1);
-      expect(selfEdge[0]!.depth).toBe(0);
+      expect(selfEdge[0].depth).toBe(0);
     });
   });
 
@@ -154,7 +154,7 @@ describe('DrizzleNodeRepository Integration Tests', () => {
 
       const child1Descendants = await repository.getDescendants(child1);
       expect(child1Descendants).toHaveLength(1);
-      expect(child1Descendants[0]!.name).toBe('Grandchild');
+      expect(child1Descendants[0].name).toBe('Grandchild');
       const child2Descendants = await repository.getDescendants(child2);
       expect(child2Descendants).toHaveLength(0);
     });
@@ -181,7 +181,7 @@ describe('DrizzleNodeRepository Integration Tests', () => {
 
       const child1Descendants = await repository.getDescendants(child1, 1, 2);
       expect(child1Descendants).toHaveLength(1);
-      expect(child1Descendants[0]!.name).toBe('Grandchild');
+      expect(child1Descendants[0].name).toBe('Grandchild');
     });
   });
 
