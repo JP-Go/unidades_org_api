@@ -1,6 +1,6 @@
 {
-  "id": "d0210549-6ecd-4e53-bc19-0ae9f89306c9",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "27a994b7-2632-4ce0-b707-b6151a0cb796",
+  "prevId": "d0210549-6ecd-4e53-bc19-0ae9f89306c9",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -33,7 +33,29 @@
           "notNull": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "edge_uq": {
+          "name": "edge_uq",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "child_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "edges_parent_id_node_id_fk": {
           "name": "edges_parent_id_node_id_fk",
@@ -110,7 +132,7 @@
       "uniqueConstraints": {
         "user_email_uq": {
           "name": "user_email_uq",
-          "nullsNotDistinct": true,
+          "nullsNotDistinct": false,
           "columns": [
             "email"
           ]

@@ -12,18 +12,18 @@ type NodeConstructorParams = {
 
 export type NodeType = keyof typeof NodeType;
 export class Node {
-  id: NodeId | null;
+  id: NodeId;
   type: NodeType;
   name: string;
   depth: number;
   ancestor?: Node;
-  descendants: Node[];
+  descendants?: Node[];
 
   constructor(
     { type, depth, name }: NodeConstructorParams,
     id: NodeId | null = null,
   ) {
-    this.id = id;
+    this.id = id ?? 0;
     this.type = type;
     this.name = name;
     this.depth = depth;
@@ -49,13 +49,24 @@ export class User extends Node {
     this.email = email;
   }
 
-  static create(email: string, name: string, depth: number) {
+  static create(email: string, name: string) {
     return new User({
-      depth,
       email,
       name,
       type: 'user',
+      depth: 0,
     });
+  }
+  static existing(email: string, name: string, depth: number, id: number) {
+    return new User(
+      {
+        email,
+        name,
+        depth,
+        type: 'user',
+      },
+      id,
+    );
   }
 }
 export class Group extends Node {
@@ -64,5 +75,22 @@ export class Group extends Node {
     id: NodeId | null = null,
   ) {
     super({ ...params, type: 'group' }, id);
+  }
+  static create(name: string) {
+    return new Group({
+      name,
+      type: 'group',
+      depth: 0,
+    });
+  }
+  static existing(name: string, depth: number, id: number) {
+    return new Group(
+      {
+        name,
+        depth,
+        type: 'group',
+      },
+      id,
+    );
   }
 }

@@ -1,8 +1,8 @@
-import { node, nodesClosure } from './node.model';
+import { node, edges } from './node.model';
 
 export const schema = {
   node,
-  nodesClosure,
+  edges,
 };
 
 export default schema;

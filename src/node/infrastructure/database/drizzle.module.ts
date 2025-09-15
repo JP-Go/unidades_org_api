@@ -1,7 +1,7 @@
 import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
-import schema, { Schema } from './schema';
+import schema, { type Schema } from './schema';
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigType } from '@nestjs/config';
+import { ConfigModule, type ConfigType } from '@nestjs/config';
 import { Pool } from 'pg';
 import { dbConfig } from 'src/config/database';
 import * as v from 'valibot';
@@ -9,7 +9,7 @@ import * as v from 'valibot';
 export const DRIZZLE = Symbol('drizzle');
 export type DrizzleDatabase = NodePgDatabase<Schema>;
 const validator = {
-  validate: (value: any) => {
+  validate: (value: unknown) => {
     const schema = v.object({
       DATABASE_URL: v.pipe(v.string(), v.url()),
     });
