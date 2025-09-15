@@ -4,19 +4,17 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, type ConfigType } from '@nestjs/config';
 import { Pool } from 'pg';
 import { dbConfig } from 'src/config/database';
-import * as v from 'valibot';
+import z from 'zod';
 
 export const DRIZZLE = Symbol('drizzle');
 export type DrizzleDatabase = NodePgDatabase<Schema>;
 const validator = {
   validate: (value: unknown) => {
-    const schema = v.object({
-      DATABASE_URL: v.pipe(v.string(), v.url()),
+    const schema = z.object({
+      DATABASE_URL: z.url(),
     });
-    const validated = v.safeParse(schema, value, {
-      abortEarly: true,
-    });
-    return { value: validated.output, error: validated.issues };
+    const validated = schema.safeParse(value);
+    return { value: validated.data, error: validated.error };
   },
 };
 
