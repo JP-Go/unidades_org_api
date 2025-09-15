@@ -9,7 +9,7 @@ import { DRIZZLE, DrizzleDatabase } from '../drizzle.module';
 import { NodeRepository } from 'src/node/domain/repositories/node.repository';
 import { Group, Node, NodeId, User } from 'src/node/domain/entities/node';
 import { edges, node } from '../node.model';
-import { and, eq, getTableColumns, gte, lt, lte, sql } from 'drizzle-orm';
+import { and, eq, getTableColumns, gte, lte, sql } from 'drizzle-orm';
 import type { PgSelectPrepare, PgSelectBase } from 'drizzle-orm/pg-core';
 import type { NodeColumns } from './@types';
 
