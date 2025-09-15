@@ -1,4 +1,12 @@
-import { pgTable, integer, varchar, timestamp } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
+import {
+  pgTable,
+  integer,
+  varchar,
+  timestamp,
+  serial,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core';
 
 export const NodeType = {
   user: 'user',
@@ -6,10 +14,10 @@ export const NodeType = {
 } as const;
 
 export const node = pgTable('node', {
-  id: integer('id').primaryKey(),
+  id: serial('id').primaryKey(),
   name: varchar('name', { length: 200 }).notNull(),
   email: varchar('email', { length: 300 }).unique('user_email_uq', {
-    nulls: 'not distinct',
+    nulls: 'distinct',
   }),
   type: varchar('type', {
     enum: ['user', 'group'],
@@ -17,16 +25,35 @@ export const node = pgTable('node', {
   createdAt: timestamp('created_at').defaultNow(),
 });
 
-export const nodesClosure = pgTable('nodes_closure', {
-  id: integer('id').primaryKey(),
-  parentId: integer('parent_id')
-    .references(() => node.id)
-    .notNull(),
-  childId: integer('child_id')
-    .references(() => node.id)
-    .notNull(),
-  depth: integer('depth'),
-});
+export const edges = pgTable(
+  'edges',
+  {
+    id: serial('id').primaryKey(),
+    parentId: integer('parent_id')
+      .references(() => node.id)
+      .notNull(),
+    childId: integer('child_id')
+      .references(() => node.id)
+      .notNull(),
+    depth: integer('depth'),
+  },
+  (table) => [uniqueIndex('edge_uq').on(table.parentId, table.childId)],
+);
 
-export type CreateNode = typeof node.$inferInsert;
-export type SelectNode = typeof node.$inferSelect;
+export const nodeRelations = relations(node, ({ many }) => ({
+  descendants: many(edges),
+  ancestors: many(edges),
+}));
+
+export const edgeRelations = relations(edges, ({ one }) => ({
+  descendants: one(node, {
+    fields: [edges.parentId],
+    references: [node.id],
+    relationName: 'descendants_edges_rel',
+  }),
+  ancestors: one(node, {
+    fields: [edges.childId],
+    references: [node.id],
+    relationName: 'ancestors_edges_rel',
+  }),
+}));

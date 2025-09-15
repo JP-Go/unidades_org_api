@@ -1,0 +1,15 @@
+services:
+  org_db:
+    image: postgres:16-alpine
+    container_name: org_db
+    environment:
+      - POSTGRES_DB=org_db
+      - POSTGRES_USER=org_api_user
+      - POSTGRES_PASSWORD=org_api_password
+    ports:
+      - '5432:5432'
+    volumes:
+      - org_db_data:/var/lib/postgresql:ro
+
+volumes:
+  org_db_data:

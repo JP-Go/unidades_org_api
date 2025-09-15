@@ -1,43 +1,52 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigType } from '@nestjs/config';
-import { Pool } from 'pg';
-import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
-import * as v from 'valibot';
-import { Schema, schema } from './infrastructure/database/schema';
-import { dbConfig } from './config/database';
-import { UserController } from './infrastructure/api/user.controller';
-
-const DRIZZLE = Symbol('drizzle');
+import { NodesController } from './infrastructure/api/nodes.controller';
+import { DrizzleModule } from './infrastructure/database/drizzle.module';
+import { UserRepository } from './domain/repositories/user.repository';
+import {
+  UserService,
+  UserServiceImpl,
+} from './application/services/user.service';
+import { DrizzleNodeRepository } from './infrastructure/database/repositories/drizzle-node.repository';
+import {
+  GroupService,
+  GroupServiceImpl,
+} from './application/services/group.service';
+import {
+  NodeService,
+  NodeServiceImpl,
+} from './application/services/nodes.service';
+import { DrizzleGroupRepository } from './infrastructure/database/repositories/drizzle-group.repository';
+import { GroupRepository } from './domain/repositories/group.repository';
+import { NodeRepository } from './domain/repositories/node.repository';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      load: [dbConfig],
-      validationSchema: {
-        validate: v.parser(
-          v.object({
-            DATABASE_URL: v.pipe(v.string(), v.url()),
-          }),
-          {
-            abortEarly: true,
-            lang: 'pt',
-          },
-        ),
-      },
-    }),
-  ],
+  imports: [DrizzleModule],
   providers: [
     {
-      provide: DRIZZLE,
-      useFactory: (config: ConfigType<typeof dbConfig>) => {
-        const pool = new Pool({
-          connectionString: config.url,
-        });
-        return drizzle(pool, { schema });
-      },
-      inject: [dbConfig.KEY],
+      provide: UserRepository,
+      useClass: DrizzleNodeRepository,
+    },
+    {
+      provide: GroupRepository,
+      useClass: DrizzleGroupRepository,
+    },
+    {
+      provide: NodeRepository,
+      useClass: DrizzleNodeRepository,
+    },
+    {
+      provide: UserService,
+      useClass: UserServiceImpl,
+    },
+    {
+      provide: NodeService,
+      useClass: NodeServiceImpl,
+    },
+    {
+      provide: GroupService,
+      useClass: GroupServiceImpl,
     },
   ],
-  controllers: [UserController],
+  controllers: [NodesController],
 })
 export class NodeModule {}

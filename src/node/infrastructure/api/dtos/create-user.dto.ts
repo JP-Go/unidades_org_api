@@ -6,4 +6,6 @@ const createUserSchema = v.object({
   email: v.pipe(v.string(), v.email()),
 });
 
+export type ICreateUserDto = v.InferInput<typeof createUserSchema>;
+
 export class CreateUserDto extends TypeschemaDto(createUserSchema) {}
