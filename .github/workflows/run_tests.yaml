@@ -22,4 +22,4 @@ jobs:
       - name: Run tests
         env:
           BUN_OPTIONS: '--tsconfig-override=tsconfig.test.ts'
-        run: bun test
+        run: bun run test

@@ -19,7 +19,7 @@ jobs:
         run: bun install
 
       - name: Run ESLint
-        run: bun lint
+        run: bun run lint
   format:
     name: Format project with prettier
     runs-on: ubuntu-latest
@@ -35,4 +35,4 @@ jobs:
         run: bun install
 
       - name: Run format
-        run: bun format
+        run: bun run format
