@@ -1,0 +1,23 @@
+name: Run Tests
+
+on:
+  push:
+
+jobs:
+  lint:
+    name: Run automated tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Use Node.js 22 to run automated tests
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run vitest
+        run: npm run test
