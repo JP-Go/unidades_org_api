@@ -23,6 +23,8 @@ services:
   org_api:
     environment:
       - DATABASE_URL=${DATABASE_URL:-postgres://org_api_user:org_api_password@org_db:5432/org_db}
+      - OTLP_PROTO_TRACE_EXPORTER_ENDPOINT={OTLP_PROTO_TRACE_EXPORTER_ENDPOINT:-"http://org_jaeger:4318/v1/traces"};
+      - OTLP_PROTO_METRICS_EXPORTER_ENDPOINT={OTLP_PROTO_METRICS_EXPORTER_ENDPOINT:-"http://org_jaeger:4318/v1/metrics"};
     build:
       context: .
       dockerfile: Dockerfile
@@ -31,7 +33,18 @@ services:
     depends_on:
       org_db:
         condition: service_healthy
+    networks:
+      - org_api
 
+  org_jaeger:
+    image: jaegertracing/all-in-one:latest
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+    ports:
+      - 16686:16686
+      - 4317:4317
+      - 4318:4318
+      - 9411:9411
     networks:
       - org_api
 

@@ -14,8 +14,10 @@ import type { NodeColumns } from './@types';
 import type { PgSelectBase, PgSelectPrepare } from 'drizzle-orm/pg-core';
 import { node } from '../node.model';
 import { eq, sql } from 'drizzle-orm';
+import { WithTracing } from 'src/decorators';
 
 @Injectable()
+@WithTracing
 export class DrizzleUserRepository implements UserRepository {
   private readonly getUserByEmailQuery: PgSelectPrepare<
     PgSelectBase<'node', NodeColumns, 'single', never>

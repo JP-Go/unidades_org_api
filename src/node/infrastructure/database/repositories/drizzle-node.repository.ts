@@ -12,8 +12,10 @@ import { edges, node } from '../node.model';
 import { and, eq, getTableColumns, gte, lte, sql } from 'drizzle-orm';
 import type { PgSelectPrepare, PgSelectBase } from 'drizzle-orm/pg-core';
 import type { NodeColumns } from './@types';
+import { WithTracing } from 'src/decorators';
 
 @Injectable()
+@WithTracing
 export class DrizzleNodeRepository implements NodeRepository {
   private readonly getNodeByIdQuery: PgSelectPrepare<
     PgSelectBase<'node', NodeColumns, 'single', never>

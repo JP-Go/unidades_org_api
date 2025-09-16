@@ -1,6 +1,9 @@
-import 'dotenv/config';
 import { defineConfig } from 'drizzle-kit';
-
+if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
+  void (async () => {
+    await import('dotenv/config');
+  })();
+}
 if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL is not set');
 }

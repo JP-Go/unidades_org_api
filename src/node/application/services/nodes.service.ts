@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Node, NodeId } from '../../domain/entities/node';
 import { NodeRepository } from 'src/node/domain/repositories/node.repository';
+import { WithTracing } from 'src/decorators';
 
 @Injectable()
 export abstract class NodeService {
@@ -17,6 +18,7 @@ export abstract class NodeService {
 }
 
 @Injectable()
+@WithTracing
 export class NodeServiceImpl implements NodeService {
   constructor(
     @Inject(NodeRepository)
