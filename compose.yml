@@ -6,10 +6,37 @@ services:
       - POSTGRES_DB=org_db
       - POSTGRES_USER=org_api_user
       - POSTGRES_PASSWORD=org_api_password
+    expose:
+      - 5432
+    networks:
+      - org_api
+    healthcheck:
+      interval: 5s
+      retries: 3
+      test: pg_isready -h localhost -U ${POSTGRES_USER:-org_api_user} -d ${POSTGRES_DB:-org_db}
+
+    # expose ports to connect to db
     ports:
       - '5432:5432'
     volumes:
       - org_db_data:/var/lib/postgresql:ro
+  org_api:
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgres://org_api_user:org_api_password@org_db:5432/org_db}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      org_db:
+        condition: service_healthy
+
+    networks:
+      - org_api
 
 volumes:
   org_db_data:
+networks:
+  org_api:
+    driver: bridge

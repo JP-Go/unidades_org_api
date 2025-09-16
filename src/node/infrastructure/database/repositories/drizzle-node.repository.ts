@@ -5,7 +5,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { DRIZZLE, DrizzleDatabase } from '../drizzle.module';
+import { DRIZZLE, type DrizzleDatabase } from '../drizzle.module';
 import { NodeRepository } from 'src/node/domain/repositories/node.repository';
 import { Group, Node, NodeId, User } from 'src/node/domain/entities/node';
 import { edges, node } from '../node.model';

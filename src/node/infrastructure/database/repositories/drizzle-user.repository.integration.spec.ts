@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { DRIZZLE, DrizzleDatabase } from '../drizzle.module';
+import { DRIZZLE, type DrizzleDatabase } from '../drizzle.module';
 import {
   PostgreSqlContainer,
   StartedPostgreSqlContainer,
