@@ -1,5 +1,3 @@
-import { getTableColumns } from 'drizzle-orm';
 import { node } from '../node.model';
 
-const nodeColumns = getTableColumns(node);
-export type NodeColumns = typeof nodeColumns;
+export type NodeColumns = typeof node._.columns;

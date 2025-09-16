@@ -17,7 +17,7 @@ import { eq, sql } from 'drizzle-orm';
 @Injectable()
 export class DrizzleUserRepository implements UserRepository {
   private readonly getUserByEmailQuery: PgSelectPrepare<
-    PgSelectBase<'node', NodeColumns, 'single', {}>
+    PgSelectBase<'node', NodeColumns, 'single', never>
   >;
   constructor(
     @Inject(NodeRepository)
