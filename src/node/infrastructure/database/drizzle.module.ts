@@ -8,22 +8,22 @@ import z from 'zod';
 
 export const DRIZZLE = Symbol('drizzle');
 export type DrizzleDatabase = NodePgDatabase<Schema>;
-const validator = {
-  validate: (value: unknown) => {
-    const schema = z.object({
-      DATABASE_URL: z.url(),
-    });
-    const validated = schema.safeParse(value);
-    return { value: validated.data, error: validated.error };
-  },
-};
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      ignoreEnvFile: process.env.NODE_ENV === 'test',
       envFilePath: ['.env'],
       load: [dbConfig],
-      validationSchema: validator,
+      validate(config) {
+        if (process.env.NODE_ENV !== 'test') {
+          const schema = z.object({
+            DATABASE_URL: z.url(),
+          });
+          return schema.parse(config);
+        }
+        return config;
+      },
     }),
   ],
   providers: [
