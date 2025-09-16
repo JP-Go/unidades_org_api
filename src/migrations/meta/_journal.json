@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1757883964758,
+      "when": 1757986131933,
       "tag": "0000_create_node_and_edges_tables",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1757942260774,
-      "tag": "0001_null_check_different_email",
       "breakpoints": true
     }
   ]

@@ -9,8 +9,8 @@ const createUserSchema = z.object({
 export class CreateUserDto extends createZodDto(createUserSchema) {}
 
 const createUserResponse = z.object({
-  id: z.number().int(),
-  type: z.string(),
+  id: z.uuid(),
+  type: z.string().toUpperCase(),
   name: z.string(),
   email: z.email(),
 });

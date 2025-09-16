@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -20,13 +21,15 @@ export class DrizzleGroupRepository implements GroupRepository {
   async getGroupById(groupId: NodeId): Promise<Group> {
     try {
       const aNode = await this.nodeRepository.getNodeById(groupId);
-      if (aNode.type !== 'group')
-        throw new NotFoundException('Group not found');
+      if (aNode.type !== 'group') throw new BadRequestException('Invalid id');
       return Group.existing(aNode.name, 0, aNode.id);
     } catch (e) {
       if (e instanceof NotFoundException) {
         throw new NotFoundException('Group not found');
+      } else if (e instanceof BadRequestException) {
+        throw e;
       }
+
       throw new InternalServerErrorException(e);
     }
   }

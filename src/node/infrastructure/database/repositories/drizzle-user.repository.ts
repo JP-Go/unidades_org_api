@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Inject,
   Injectable,
@@ -55,18 +56,18 @@ export class DrizzleUserRepository implements UserRepository {
     );
   }
   async addUserToGroup(user: User, group: Group): Promise<void> {
-    user = await this.getUserById(user.id);
-    group = await this.nodeRepository.getNodeById(group.id);
     return this.nodeRepository.addEdge(group, user);
   }
   async getUserById(userId: NodeId): Promise<User> {
     try {
       const node = await this.nodeRepository.getNodeById(userId);
-      if (node.type !== 'user') throw new NotFoundException('User not found');
+      if (node.type !== 'user') throw new BadRequestException('User not found');
       return User.existing(node.email!, node.name, node.depth, node.id);
     } catch (e) {
       if (e instanceof NotFoundException) {
         throw new NotFoundException('User not found');
+      } else if (e instanceof BadRequestException) {
+        throw e;
       }
       throw new InternalServerErrorException(e);
     }

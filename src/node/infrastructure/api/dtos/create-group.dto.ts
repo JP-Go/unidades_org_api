@@ -3,13 +3,14 @@ import z from 'zod';
 
 const createGroupSchema = z.object({
   name: z.string().min(1),
-  parentId: z.number().int().min(1).optional(),
+  parentId: z.uuid().optional(),
 });
 
 export class CreateGroupDto extends createZodDto(createGroupSchema) {}
 
 const createGroupResponse = z.object({
+  id: z.uuid(),
   name: z.string().min(1),
-  parentId: z.number().int().min(1).optional(),
+  type: z.string().toUpperCase(),
 });
 export class CreateGroupResponse extends createZodDto(createGroupResponse) {}

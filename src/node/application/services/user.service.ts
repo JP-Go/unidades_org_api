@@ -29,10 +29,8 @@ export class UserServiceImpl implements UserService {
     );
   }
   async addUserToGroup(user: NodeId, group: NodeId): Promise<void> {
-    const [userFound, groupFound] = await Promise.all([
-      this.userRepository.getUserById(user),
-      this.groupRepository.getGroupById(group),
-    ]);
+    const userFound = await this.userRepository.getUserById(user);
+    const groupFound = await this.groupRepository.getGroupById(group);
     return this.userRepository.addUserToGroup(userFound, groupFound);
   }
   async getUserById(userId: NodeId): Promise<User> {

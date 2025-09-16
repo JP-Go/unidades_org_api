@@ -29,6 +29,6 @@ export class GroupServiceImpl implements GroupService {
     userId: NodeId,
     maxDepth?: number,
   ): Promise<Group[]> {
-    return this.groupRepository.getUserOrganizations(userId, maxDepth);
+    return this.groupRepository.getUserOrganizations(userId, maxDepth ?? -1);
   }
 }

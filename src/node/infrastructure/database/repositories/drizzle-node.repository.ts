@@ -29,11 +29,6 @@ export class DrizzleNodeRepository implements NodeRepository {
       .prepare('get_node_by_id');
   }
   async addEdge(fromNode: Node, toNode: Node): Promise<void> {
-    if (fromNode.id === 0 || toNode.id === 0) {
-      throw new UnprocessableEntityException(
-        'Cannot create edges from non-saved nodes',
-      );
-    }
     if (fromNode.id === toNode.id) {
       throw new UnprocessableEntityException('Cyclic reference not allowed');
     }
@@ -50,11 +45,11 @@ export class DrizzleNodeRepository implements NodeRepository {
       throw new UnprocessableEntityException('Cyclic reference not allowed');
     }
 
-    // WARN: not excluding self references because we will update them to
     const ancestors = await this.getAncestors(fromNodeDb, 0);
     const descendants = await this.getDescendants(toNodeDb, 0);
     await this.db.transaction(async (tx) => {
       await tx.insert(edges).values({
+        id: crypto.randomUUID(),
         parentId: fromNodeDb.id,
         childId: toNodeDb.id,
         depth: 1,
@@ -70,6 +65,7 @@ export class DrizzleNodeRepository implements NodeRepository {
             (existingEdge && existingEdge.depth! < newDepth)
           ) {
             relatedEdges.push({
+              id: crypto.randomUUID(),
               childId: d.id,
               parentId: a.id,
               depth: newDepth,
@@ -189,6 +185,7 @@ export class DrizzleNodeRepository implements NodeRepository {
   async addNode(aNode: Node): Promise<Node> {
     const savedNode = await this.db.transaction(async (tx) => {
       const insertValue: typeof node.$inferInsert = {
+        id: crypto.randomUUID(),
         name: aNode.name,
         type: aNode.type,
         createdAt: new Date(),
@@ -204,6 +201,7 @@ export class DrizzleNodeRepository implements NodeRepository {
         throw new InternalServerErrorException('Failed to save node');
       }
       await tx.insert(edges).values({
+        id: crypto.randomUUID(),
         childId: saved.id,
         parentId: saved.id,
         depth: 0,
@@ -260,6 +258,7 @@ export class DrizzleNodeRepository implements NodeRepository {
     await this.db
       .insert(edges)
       .values({
+        id: crypto.randomUUID(),
         childId: aNode.id,
         parentId: aNode.id,
         depth: 0,

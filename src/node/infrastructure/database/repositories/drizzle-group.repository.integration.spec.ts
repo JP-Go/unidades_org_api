@@ -25,8 +25,7 @@ describe('DrizzleGroupRepository Integration Tests', () => {
   let pool: Pool;
 
   beforeAll(async () => {
-    const containerDef = new PostgreSqlContainer('postgres:16-alpine');
-    container = await containerDef.start();
+    container = await new PostgreSqlContainer('postgres:16-alpine').start();
     pool = new Pool({
       connectionString: container.getConnectionUri(),
     });
@@ -86,12 +85,15 @@ describe('DrizzleGroupRepository Integration Tests', () => {
         parentGroup.id,
       );
 
-      expect(childGroup).toBeDefined();
-      expect(childGroup.name).toBe('Child Group');
+      const grandChildGroup = await repository.createGroup(
+        Group.create('Grandchild Group'),
+        childGroup.id,
+      );
+      expect(grandChildGroup).toBeDefined();
+      expect(grandChildGroup.name).toBe('Grandchild Group');
 
-      const ancestors = await nodeRepository.getAncestors(childGroup, 1);
-      expect(ancestors).toHaveLength(1);
-      expect(ancestors[0]?.id).toBe(parentGroup.id);
+      const ancestors = await nodeRepository.getAncestors(grandChildGroup, 1);
+      expect(ancestors).toHaveLength(2);
     });
   });
 

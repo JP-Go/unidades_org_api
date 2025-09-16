@@ -3,7 +3,7 @@ import z from 'zod';
 
 const listOfNodesResponse = z.array(
   z.object({
-    id: z.number().int(),
+    id: z.uuid(),
     name: z.string(),
     depth: z.number().int(),
   }),

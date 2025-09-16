@@ -1,5 +1,5 @@
 {
-  "id": "d0210549-6ecd-4e53-bc19-0ae9f89306c9",
+  "id": "aa8e879e-acfc-4ada-a8ea-b9cc6c591f97",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,19 +10,19 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
         "parent_id": {
           "name": "parent_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
         "child_id": {
           "name": "child_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -33,7 +33,29 @@
           "notNull": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "edge_uq": {
+          "name": "edge_uq",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "child_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "edges_parent_id_node_id_fk": {
           "name": "edges_parent_id_node_id_fk",
@@ -74,7 +96,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
@@ -110,7 +132,7 @@
       "uniqueConstraints": {
         "user_email_uq": {
           "name": "user_email_uq",
-          "nullsNotDistinct": true,
+          "nullsNotDistinct": false,
           "columns": [
             "email"
           ]
