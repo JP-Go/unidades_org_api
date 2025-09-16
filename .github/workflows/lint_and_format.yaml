@@ -35,4 +35,4 @@ jobs:
         run: bun install
 
       - name: Run format
-        run: bun run format
+        run: bun run format:check

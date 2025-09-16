@@ -29,7 +29,7 @@ describe('DrizzleUserRepository Integration Tests', () => {
   beforeAll(async () => {
     container = await new PostgreSqlContainer('postgres:16-alpine').start();
     pool = new Pool({ connectionString: container.getConnectionUri() });
-    db = drizzle(pool, { logger: true });
+    db = drizzle(pool);
     await migrate(db, { migrationsFolder: './src/migrations' });
 
     const moduleRef = await Test.createTestingModule({
