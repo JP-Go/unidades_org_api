@@ -1,4 +1,4 @@
-export type NodeId = number;
+export type NodeId = string;
 export const NodeType = {
   user: 'user',
   group: 'group',
@@ -25,7 +25,7 @@ export class Node {
     { type, depth, name, email }: NodeConstructorParams,
     id: NodeId | null = null,
   ) {
-    this.id = id ?? 0;
+    this.id = id ?? crypto.randomUUID();
     this.type = type;
     this.name = name;
     this.email = email;
@@ -54,7 +54,7 @@ export class User extends Node {
       depth: 0,
     });
   }
-  static existing(email: string, name: string, depth: number, id: number) {
+  static existing(email: string, name: string, depth: number, id: string) {
     return new User(
       {
         email,
@@ -81,7 +81,7 @@ export class Group extends Node {
       depth: 0,
     });
   }
-  static existing(name: string, depth: number, id: number) {
+  static existing(name: string, depth: number, id: string) {
     return new Group(
       {
         name,

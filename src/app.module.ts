@@ -31,6 +31,11 @@ class HttpExceptionFilter extends BaseExceptionFilter {
         this.logger.error(`ZodSerializationException: ${zodError.message}`);
       }
     }
+    const response = exception.getResponse();
+    if (response && typeof response === 'object' && 'statusCode' in response) {
+      (response as Record<string, unknown>).status_code = response.statusCode;
+      delete response.statusCode;
+    }
 
     super.catch(exception, host);
   }

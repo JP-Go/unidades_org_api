@@ -4,8 +4,8 @@ import {
   integer,
   varchar,
   timestamp,
-  serial,
   uniqueIndex,
+  uuid,
 } from 'drizzle-orm/pg-core';
 
 export const NodeType = {
@@ -14,7 +14,7 @@ export const NodeType = {
 } as const;
 
 export const node = pgTable('node', {
-  id: serial('id').primaryKey(),
+  id: uuid('id').primaryKey(),
   name: varchar('name', { length: 200 }).notNull(),
   email: varchar('email', { length: 300 }).unique('user_email_uq', {
     nulls: 'distinct',
@@ -28,11 +28,11 @@ export const node = pgTable('node', {
 export const edges = pgTable(
   'edges',
   {
-    id: serial('id').primaryKey(),
-    parentId: integer('parent_id')
+    id: uuid('id').primaryKey(),
+    parentId: uuid('parent_id')
       .references(() => node.id)
       .notNull(),
-    childId: integer('child_id')
+    childId: uuid('child_id')
       .references(() => node.id)
       .notNull(),
     depth: integer('depth'),

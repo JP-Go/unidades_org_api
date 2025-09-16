@@ -106,7 +106,7 @@ describe('DrizzleUserRepository Integration Tests', () => {
     });
 
     it('should throw NotFoundException for a non-existent user ID', async () => {
-      await expect(repository.getUserById(999)).rejects.toThrow(
+      await expect(repository.getUserById(crypto.randomUUID())).rejects.toThrow(
         NotFoundException,
       );
     });
@@ -132,8 +132,12 @@ describe('DrizzleUserRepository Integration Tests', () => {
       const user = await repository.createUser(
         User.create('member@test.com', 'Group Member'),
       );
+      const root = await groupRepository.createGroup(
+        Group.create('Root Group'),
+      );
       const parentGroup = await groupRepository.createGroup(
         Group.create('Parent Group'),
+        root.id,
       );
       const childGroup = await groupRepository.createGroup(
         Group.create('Child Group'),
@@ -144,9 +148,11 @@ describe('DrizzleUserRepository Integration Tests', () => {
 
       const organizations = await groupRepository.getUserOrganizations(user.id);
 
-      expect(organizations).toHaveLength(2);
+      expect(organizations).toHaveLength(3);
       const orgNames = organizations.map((o) => o.name).sort();
-      expect(orgNames).toEqual(['Child Group', 'Parent Group'].sort());
+      expect(orgNames).toEqual(
+        ['Child Group', 'Parent Group', 'Root Group'].sort(),
+      );
     });
   });
 });

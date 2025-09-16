@@ -93,8 +93,9 @@ describe('DrizzleNodeRepository Integration Tests', () => {
     });
 
     it('should throw NotFoundException for a non-existent ID', async () => {
-      await expect(repository.getNodeById(15)).rejects.toThrow(
-        'Node with 15 not found.',
+      const id = crypto.randomUUID();
+      await expect(repository.getNodeById(id)).rejects.toThrow(
+        'Node with ' + id + ' not found.',
       );
     });
   });
