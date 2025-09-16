@@ -1,0 +1,12 @@
+node_modules
+dist
+test
+**/*.spec.ts
+**/*.test.ts
+.env
+.env.example
+.prettierrc
+eslint.config.mjs
+README.md
+vitest.config.mts
+docker
