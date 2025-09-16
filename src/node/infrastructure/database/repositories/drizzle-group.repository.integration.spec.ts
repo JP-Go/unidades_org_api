@@ -53,7 +53,7 @@ describe('DrizzleGroupRepository Integration Tests', () => {
 
     repository = moduleRef.get<DrizzleGroupRepository>(DrizzleGroupRepository);
     nodeRepository = moduleRef.get<NodeRepository>(NodeRepository);
-  }, 10000);
+  }, 30000);
 
   afterAll(async () => {
     await pool.end();

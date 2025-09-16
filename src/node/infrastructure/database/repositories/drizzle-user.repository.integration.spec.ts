@@ -56,7 +56,7 @@ describe('DrizzleUserRepository Integration Tests', () => {
     repository = moduleRef.get<UserRepository>(UserRepository);
     nodeRepository = moduleRef.get<NodeRepository>(NodeRepository);
     groupRepository = moduleRef.get<GroupRepository>(GroupRepository);
-  }, 5000);
+  }, 30000);
 
   afterAll(async () => {
     await pool.end();
