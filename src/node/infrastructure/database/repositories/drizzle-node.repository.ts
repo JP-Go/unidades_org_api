@@ -111,6 +111,7 @@ export class DrizzleNodeRepository implements NodeRepository {
         ),
       );
     }
+    query.orderBy(edges.depth);
     const results = await query;
 
     return results.map((r) => {
@@ -158,6 +159,7 @@ export class DrizzleNodeRepository implements NodeRepository {
         ),
       );
     }
+    query.orderBy(edges.depth);
     const results = await query;
 
     return results.map((r) => {

@@ -40,7 +40,7 @@ export class NodesController {
   @HttpCode(201)
   @ZodResponse({ type: CreateGroupResponse })
   async createGroup(@Body() body: CreateGroupDto) {
-    return this.groupService.createGroup(body);
+    return this.groupService.createGroup(body, body.parentId);
   }
 
   @Post('users/:userId/groups')
