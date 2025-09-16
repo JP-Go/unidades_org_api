@@ -30,7 +30,7 @@ describe('DrizzleGroupRepository Integration Tests', () => {
     pool = new Pool({
       connectionString: container.getConnectionUri(),
     });
-    db = drizzle(pool, { logger: true });
+    db = drizzle(pool);
     await migrate(db, { migrationsFolder: './src/migrations' });
 
     const moduleRef = await Test.createTestingModule({
@@ -53,7 +53,7 @@ describe('DrizzleGroupRepository Integration Tests', () => {
 
     repository = moduleRef.get<DrizzleGroupRepository>(DrizzleGroupRepository);
     nodeRepository = moduleRef.get<NodeRepository>(NodeRepository);
-  }, 10000);
+  }, 30000);
 
   afterAll(async () => {
     await pool.end();

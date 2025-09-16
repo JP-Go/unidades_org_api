@@ -16,7 +16,7 @@ import type { NodeColumns } from './@types';
 @Injectable()
 export class DrizzleNodeRepository implements NodeRepository {
   private readonly getNodeByIdQuery: PgSelectPrepare<
-    PgSelectBase<'node', NodeColumns, 'single', {}>
+    PgSelectBase<'node', NodeColumns, 'single', never>
   >;
   constructor(
     @Inject(DRIZZLE)

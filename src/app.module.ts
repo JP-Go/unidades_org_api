@@ -2,16 +2,14 @@ import {
   ZodValidationPipe,
   ZodSerializerInterceptor,
   ZodSerializationException,
-  ZodValidationException,
 } from 'nestjs-zod';
-import z, { ZodError } from 'zod';
+import { ZodError } from 'zod';
 import {
   Module,
   HttpException,
   ArgumentsHost,
   Logger,
   Catch,
-  BadRequestException,
 } from '@nestjs/common';
 import { NodeModule } from './node/node.module';
 import {
