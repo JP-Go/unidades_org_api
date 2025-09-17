@@ -1,4 +1,5 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import { WithTracing } from 'src/decorators';
 import { NodeId, User } from 'src/node/domain/entities/node';
 import { GroupRepository } from 'src/node/domain/repositories/group.repository';
 import { UserRepository } from 'src/node/domain/repositories/user.repository';
@@ -12,6 +13,7 @@ export abstract class UserService {
 }
 
 @Injectable()
+@WithTracing
 export class UserServiceImpl implements UserService {
   constructor(
     @Inject(UserRepository)

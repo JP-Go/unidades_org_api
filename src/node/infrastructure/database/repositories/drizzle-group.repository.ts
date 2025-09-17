@@ -9,8 +9,10 @@ import { NodeRepository } from 'src/node/domain/repositories/node.repository';
 import { Group, type NodeId } from 'src/node/domain/entities/node';
 import { GroupRepository } from 'src/node/domain/repositories/group.repository';
 import { UserRepository } from 'src/node/domain/repositories/user.repository';
+import { WithTracing } from 'src/decorators';
 
 @Injectable()
+@WithTracing
 export class DrizzleGroupRepository implements GroupRepository {
   constructor(
     @Inject(NodeRepository)
