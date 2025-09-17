@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { MethodWithTracing, WithTracing } from 'src/decorators';
+import { WithTracing } from 'src/decorators';
 import { Group, NodeId } from 'src/node/domain/entities/node';
 import { GroupRepository } from 'src/node/domain/repositories/group.repository';
 import { CreateGroupDto } from 'src/node/infrastructure/api/dtos/create-group.dto';

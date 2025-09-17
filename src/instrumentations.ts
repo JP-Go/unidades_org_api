@@ -5,7 +5,6 @@ import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core'
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { NodeSDK } from '@opentelemetry/sdk-node';
-import { trace } from '@opentelemetry/api';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
@@ -34,8 +33,6 @@ const sdk = new NodeSDK({
   }),
   instrumentations: [getNodeAutoInstrumentations(), new NestInstrumentation()],
 });
-
-export const tracer = trace.getTracer('root');
 
 sdk.start();
 process.on('beforeExit', () => {

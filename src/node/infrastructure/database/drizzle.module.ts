@@ -5,6 +5,7 @@ import { ConfigModule, type ConfigType } from '@nestjs/config';
 import { Pool } from 'pg';
 import { dbConfig } from 'src/config/database';
 import z from 'zod';
+import { migrate } from 'drizzle-orm/node-postgres/migrator';
 
 export const DRIZZLE = Symbol('drizzle');
 export type DrizzleDatabase = NodePgDatabase<Schema>;
@@ -36,7 +37,11 @@ export type DrizzleDatabase = NodePgDatabase<Schema>;
           connectionString: config.url,
         });
         await pool.connect();
-        return drizzle(pool, { schema }) as DrizzleDatabase;
+        const db = drizzle(pool, { schema });
+        await migrate(db, {
+          migrationsFolder: './src/migrations',
+        });
+        return db;
       },
       inject: [dbConfig.KEY],
     },

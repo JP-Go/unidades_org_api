@@ -10,11 +10,6 @@ services:
       - 5432
     networks:
       - org_api
-    healthcheck:
-      interval: 5s
-      retries: 3
-      test: pg_isready -h localhost -U ${POSTGRES_USER:-org_api_user} -d ${POSTGRES_DB:-org_db}
-
     # expose ports to connect to db
     ports:
       - '5432:5432'
@@ -23,16 +18,15 @@ services:
   org_api:
     environment:
       - DATABASE_URL=${DATABASE_URL:-postgres://org_api_user:org_api_password@org_db:5432/org_db}
-      - OTLP_PROTO_TRACE_EXPORTER_ENDPOINT={OTLP_PROTO_TRACE_EXPORTER_ENDPOINT:-"http://org_jaeger:4318/v1/traces"};
-      - OTLP_PROTO_METRICS_EXPORTER_ENDPOINT={OTLP_PROTO_METRICS_EXPORTER_ENDPOINT:-"http://org_jaeger:4318/v1/metrics"};
+      - OTLP_PROTO_TRACE_EXPORTER_ENDPOINT=${OTLP_PROTO_TRACE_EXPORTER_ENDPOINT:-http://org_jaeger:4318/v1/traces}
+      - OTLP_PROTO_METRICS_EXPORTER_ENDPOINT=${OTLP_PROTO_METRICS_EXPORTER_ENDPOINT:-http://org_jaeger:4318/v1/metrics}
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - 3000:3000
     depends_on:
-      org_db:
-        condition: service_healthy
+      - org_db
     networks:
       - org_api
 
@@ -40,6 +34,11 @@ services:
     image: jaegertracing/all-in-one:latest
     environment:
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+    expose:
+      - 16686
+      - 4317
+      - 4318
+      - 9411
     ports:
       - 16686:16686
       - 4317:4317

@@ -1,18 +1,4 @@
 import { trace, context, Span } from '@opentelemetry/api';
-import { tracer } from './instrumentations';
-
-export function MethodWithTracing() {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: TypedPropertyDescriptor<any>,
-  ) {
-    const originalMethod = descriptor.value;
-
-    descriptor.value = function (...args: any[]) {};
-    return descriptor;
-  };
-}
 
 /**
  * `WithTracing` is a class decorator that automatically instruments all methods of a class with OpenTelemetry tracing.
@@ -21,6 +7,8 @@ export function MethodWithTracing() {
  * @param {Function} target - The constructor function of the class to decorate.
  * @todo Figure out why it overrides other method decoratos
  */
+// Utilizamos Function pois esse decorator pode ser aplicado em qualquer definição de classe
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export function WithTracing(target: Function) {
   const objDescriptors = Object.getOwnPropertyDescriptors(target.prototype);
 
@@ -28,13 +16,20 @@ export function WithTracing(target: Function) {
     ([name, descriptor]) =>
       name !== 'constructor' && typeof descriptor.value === 'function',
   );
+  const tracer = trace.getTracer(target.name);
 
   for (const [propertyName, descriptor] of methodsDescriptors) {
     const isMethod = descriptor.value instanceof Function;
     if (!isMethod) continue;
 
-    const originalMethod = descriptor.value;
+    // Utilizamos any nesta função pois como estamos sobrescrevendo um método por meio de reflection não temos
+    // acesso à tipagem em tempo de compilação portanto não temos como inferir explicitamente
+    // o tipo dos argumentos da função.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const originalMethod: (...args: any[]) => unknown = descriptor.value;
 
+    // Novamente, não podemos inferir explicitamente o tipo dos argumentos da função em tempo de compilação.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     descriptor.value = function (...args: any[]) {
       const currentSpan = trace.getActiveSpan();
 
@@ -48,20 +43,22 @@ export function WithTracing(target: Function) {
         span = tracer.startSpan(methodName);
       }
       span.setAttribute('call_id', crypto.randomUUID());
-      span.setAttribute('called_at', Bun.nanoseconds());
+      span.setAttribute('called_at', Date.now());
 
       span.setAttribute('method_name', methodName);
       span.setAttribute('method_arguments', JSON.stringify(args));
 
       span.addEvent(`Call to ${methodName} with ${JSON.stringify(args)} `);
 
-      const result = originalMethod?.apply(this, args);
+      const result = originalMethod?.apply?.(this, args);
 
       span.addEvent(`Ended ${methodName}`);
 
-      span.setAttribute('call_ended_at', Bun.nanoseconds());
+      span.setAttribute('call_ended_at', Date.now());
       span.end();
 
+      // Por fim, não temos como inferir o tipo do retorno em tempo de compilação
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return result;
     };
 
