@@ -41,7 +41,7 @@ A documentação de API OpenAPI 3.0 está disponível no endpoint `/docs` da API
 
 ![docs swagger](./assets/docs.png)
 
-### Setup com docker
+## Setup com docker
 
 Se você possui o docker instalado, você pode apenas executar o comando `docker compose up` para iniciar o projeto em modo produção. Por padrão, o servidor é disponibilizado na porta 3000.
 
@@ -50,9 +50,9 @@ Se você possui o docker instalado, você pode apenas executar o comando `docker
 Implementamos tracing e métricas utilizando o [OpenTelemetry](https://opentelemetry.io)e o [Jaeger](https://jaegertracing.io) containerizado com docker.
 Os traces de método das classes são personalizados e possuem as seguintes informações
 - 'call_id': Um id (UUID v4) para a chamada
-- 'called_at': Numero de nanosegundos, contados desde que o processo foi inicializado, em que a chamada foi realizada
+- 'called_at': Timestamp em formato unix millis em que a chamada foi realizada
 - 'method_name': Nome do método chamado
 - 'method_arguments': Lista de argumentos com qual o método foi chamado
-- 'call_ended_at': Numero de nanosegundos, contados desde que o processo foi inicializado, em que a chamada foi finalizada
+- 'call_ended_at': Timestamp em formato unix milis em que a chamada foi finalizada
 
-O painel do Jaeger fica disponível na porta 16686
+O painel do Jaeger fica disponível na porta `16686`
