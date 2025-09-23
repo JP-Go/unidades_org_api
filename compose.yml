@@ -10,7 +10,11 @@ services:
       - 5432
     networks:
       - org_api
-    # expose ports to connect to db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - '5432:5432'
     volumes:
@@ -26,7 +30,8 @@ services:
     ports:
       - 3000:3000
     depends_on:
-      - org_db
+      org_db:
+        condition: service_healthy
     networks:
       - org_api
 
