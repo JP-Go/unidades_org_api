@@ -61,6 +61,6 @@ O painel do Jaeger fica disponível na porta `16686`
 
 ### Performance
 
-Realizou-se medição de performance utilizando o Locust. Segue métricas da aplicação
+Realizou-se medição de performance utilizando o Locust. Segue métricas da aplicação (teste parcial, tempo de execução: 52s)
 
 ![Métricas utilizando locust](./assets/perf.png)
