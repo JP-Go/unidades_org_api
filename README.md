@@ -23,13 +23,14 @@ banco de dados postgres disponível.
 ### Rodando o projeto em desenvolvimento
 
 Execute os seguintes passos:
+
 1. Após clonar este projeto, crie um arquivo `.env` na raiz do projeto com a variável `DATABASE_URL` definida como a url de conexão ao banco
 2. Execute o comando abaixo para instalar as dependências
-  `bun install`
-2. Execute o comando abaixo para executar as migrações no banco de dados
-  `bun run db:push`
-3. Execute o comando abaixo para iniciar o servidor de desenvolvimento
-  `bun run start:dev`
+   `bun install`
+3. Execute o comando abaixo para executar as migrações no banco de dados
+   `bun run db:push`
+4. Execute o comando abaixo para iniciar o servidor de desenvolvimento
+   `bun run start:dev`
 
 ### Testes automatizados
 
@@ -47,8 +48,9 @@ Se você possui o docker instalado, você pode apenas executar o comando `docker
 
 ### OpenTelemetry e Tracing
 
-Implementamos tracing e métricas utilizando o [OpenTelemetry](https://opentelemetry.io)e o [Jaeger](https://jaegertracing.io) containerizado com docker.
+Implementamos tracing e métricas utilizando o [OpenTelemetry](https://opentelemetry.io) e o [Jaeger](https://jaegertracing.io) containerizado com docker.
 Os traces de método das classes são personalizados e possuem as seguintes informações
+
 - 'call_id': Um id (UUID v4) para a chamada
 - 'called_at': Timestamp em formato unix millis em que a chamada foi realizada
 - 'method_name': Nome do método chamado
@@ -56,3 +58,9 @@ Os traces de método das classes são personalizados e possuem as seguintes info
 - 'call_ended_at': Timestamp em formato unix milis em que a chamada foi finalizada
 
 O painel do Jaeger fica disponível na porta `16686`
+
+### Performance
+
+Realizou-se medição de performance utilizando o Locust. Segue métricas da aplicação
+
+![Métricas utilizando locust](./assets/perf.png)
